@@ -6,8 +6,6 @@ workflows:
       vars:
         PACKAGE_NAME: "app.pragmacontent.com"
       flutter: stable
-      xcode: latest
-      cocoapods: default
     scripts:
       - name: Set up local.properties
         script: |
@@ -15,17 +13,11 @@ workflows:
       - name: Get Flutter packages
         script: |
           cd . && flutter packages pub get
-      - name: Install pods
-        script: |
-          flutter clean
-          flutter run
-          find . -name "Podfile" -execdir pod install \;
       - name: Build APK with Flutter
         script: |
           flutter clean
-          flutter run
-          flutter pub outdated
-          cd . && flutter build apk --split-per-abi --no-tree-shake-icons --build-name=1.0.0 --build-number=$(($(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks="$GOOGLE_PLAY_TRACK") + 1))
+          flutter pub get
+          flutter build apk --split-per-abi --no-tree-shake-icons --build-name=1.0.0 --build-number=$(($(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks="$GOOGLE_PLAY_TRACK") + 1))
     artifacts:
       - build/**/outputs/**/*.apk
       - build/**/outputs/**/*.aab
